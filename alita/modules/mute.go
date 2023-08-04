@@ -9,23 +9,18 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Divkix/Alita_Robot/alita/utils/chat_status"
-	"github.com/Divkix/Alita_Robot/alita/utils/extraction"
-	"github.com/Divkix/Alita_Robot/alita/utils/helpers"
-	"github.com/Divkix/Alita_Robot/alita/utils/parsemode"
+	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
+	"github.com/divideprojects/Alita_Robot/alita/utils/extraction"
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
 )
 
-type mutesModuleStruct struct {
-	modname string
-}
-
-var mutesModule = mutesModuleStruct{modname: "Mutes"}
+var mutesModule = moduleStruct{moduleName: "Mutes"}
 
 /* Used to temporarily mute a user from group
 
 The Bot, Muter should be admin with restrict permissions in order to use this */
 
-func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender.User
 	msg := ctx.EffectiveMessage
@@ -59,7 +54,7 @@ func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	} else if userId == 0 {
 		_, err := msg.Reply(b, "I don't know who you're talking about, you're going to need to specify a user...!",
-			parsemode.Shtml())
+			helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -69,7 +64,7 @@ func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	// User should be in chat for getting restricted
 	if !chat_status.IsUserInChat(b, chat, userId) {
-		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", parsemode.Shtml())
+		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -77,7 +72,7 @@ func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	}
 	if chat_status.IsUserBanProtected(b, ctx, nil, userId) {
-		_, err := msg.Reply(b, "Why would I mute an admin? That sounds like a pretty dumb idea.", parsemode.Shtml())
+		_, err := msg.Reply(b, "Why would I mute an admin? That sounds like a pretty dumb idea.", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -86,7 +81,7 @@ func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if userId == b.Id {
-		_, err := msg.Reply(b, "Why would I restrict myself?", parsemode.Shtml())
+		_, err := msg.Reply(b, "Why would I restrict myself?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -142,7 +137,7 @@ func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	_, err = msg.Reply(b,
 		baseStr,
-		parsemode.Shtml(),
+		helpers.Shtml(),
 	)
 	if err != nil {
 		log.Error(err)
@@ -156,7 +151,7 @@ func (m mutesModuleStruct) tMute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 The Bot, Muter should be admin with restrict permissions in order to use this */
 
-func (m mutesModuleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender.User
 	msg := ctx.EffectiveMessage
@@ -190,7 +185,7 @@ func (m mutesModuleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	} else if userId == 0 {
 		_, err := msg.Reply(b, "I don't know who you're talking about, you're going to need to specify a user...!",
-			parsemode.Shtml())
+			helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -200,7 +195,7 @@ func (m mutesModuleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	// User should be in chat for getting restricted
 	if !chat_status.IsUserInChat(b, chat, userId) {
-		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", parsemode.Shtml())
+		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -208,7 +203,7 @@ func (m mutesModuleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	}
 	if chat_status.IsUserBanProtected(b, ctx, nil, userId) {
-		_, err := msg.Reply(b, "I don't think you'd want me to mute an admin.", parsemode.Shtml())
+		_, err := msg.Reply(b, "I don't think you'd want me to mute an admin.", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -217,7 +212,7 @@ func (m mutesModuleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if userId == b.Id {
-		_, err := msg.Reply(b, "Why would I restrict myself?", parsemode.Shtml())
+		_, err := msg.Reply(b, "Why would I restrict myself?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -260,7 +255,7 @@ func (m mutesModuleStruct) mute(b *gotgbot.Bot, ctx *ext.Context) error {
 	_, err = msg.Reply(b,
 		fmt.Sprintf(baseStr, helpers.MentionHtml(muteUser.Id, muteUser.FirstName)),
 		&gotgbot.SendMessageOpts{
-			ParseMode: parsemode.HTML,
+			ParseMode: helpers.HTML,
 			ReplyMarkup: gotgbot.InlineKeyboardMarkup{
 				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 					{
@@ -287,7 +282,7 @@ The Bot, Muter should be admin with restrict permissions in order to use this
 
 The message of muter will be deleted after sending this command */
 
-func (m mutesModuleStruct) sMute(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) sMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender.User
 	msg := ctx.EffectiveMessage
@@ -324,7 +319,7 @@ func (m mutesModuleStruct) sMute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	} else if userId == 0 {
 		_, err := msg.Reply(b, "I don't know who you're talking about, you're going to need to specify a user...!",
-			parsemode.Shtml())
+			helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -334,7 +329,7 @@ func (m mutesModuleStruct) sMute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	// User should be in chat for getting restricted
 	if !chat_status.IsUserInChat(b, chat, userId) {
-		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", parsemode.Shtml())
+		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -343,7 +338,7 @@ func (m mutesModuleStruct) sMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if chat_status.IsUserBanProtected(b, ctx, nil, userId) {
-		_, err := msg.Reply(b, "Why would I mute an admin? That sounds like a pretty dumb idea.", parsemode.Shtml())
+		_, err := msg.Reply(b, "Why would I mute an admin? That sounds like a pretty dumb idea.", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -387,7 +382,7 @@ The Bot, Muter should be admin with restrict permissions in order to use this
 
 Used as a reply to a message and delete the replied message*/
 
-func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender.User
 	msg := ctx.EffectiveMessage
@@ -424,7 +419,7 @@ func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	} else if userId == 0 {
 		_, err := msg.Reply(b, "I don't know who you're talking about, you're going to need to specify a user...!",
-			parsemode.Shtml())
+			helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -434,7 +429,7 @@ func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	// User should be in chat for getting restricted
 	if !chat_status.IsUserInChat(b, chat, userId) {
-		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", parsemode.Shtml())
+		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -443,7 +438,7 @@ func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if chat_status.IsUserBanProtected(b, ctx, nil, userId) {
-		_, err := msg.Reply(b, "I don't think you'd want me to mute an admin.", parsemode.Shtml())
+		_, err := msg.Reply(b, "I don't think you'd want me to mute an admin.", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -452,7 +447,7 @@ func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if msg.ReplyToMessage == nil {
-		_, err := msg.Reply(b, "You need to reply to a message to delete it and mute the user!", parsemode.Shtml())
+		_, err := msg.Reply(b, "You need to reply to a message to delete it and mute the user!", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -501,7 +496,7 @@ func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 	_, err = msg.Reply(b,
 		fmt.Sprintf(baseStr, helpers.MentionHtml(muteUser.Id, muteUser.FirstName)),
 		&gotgbot.SendMessageOpts{
-			ParseMode: parsemode.HTML,
+			ParseMode: helpers.HTML,
 			ReplyMarkup: gotgbot.InlineKeyboardMarkup{
 				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 					{
@@ -526,7 +521,7 @@ func (m mutesModuleStruct) dMute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 The Bot, Unmuter should be admin with restrict permissions in order to use this */
 
-func (m mutesModuleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender.User
 	msg := ctx.EffectiveMessage
@@ -560,7 +555,7 @@ func (m mutesModuleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	} else if userId == 0 {
 		_, err := msg.Reply(b, "I don't know who you're talking about, you're going to need to specify a user...!",
-			parsemode.Shtml())
+			helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -570,7 +565,7 @@ func (m mutesModuleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
 
 	// User should be in chat for getting restricted
 	if !chat_status.IsUserInChat(b, chat, userId) {
-		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", parsemode.Shtml())
+		_, err := msg.Reply(b, "This user is not in this chat, how can I restrict them?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -579,7 +574,7 @@ func (m mutesModuleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if userId == b.Id {
-		_, err := msg.Reply(b, "Why would I restrict myself?", parsemode.Shtml())
+		_, err := msg.Reply(b, "Why would I restrict myself?", helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -616,7 +611,7 @@ func (m mutesModuleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
 			"Alright!\nI'll allow %s to speak again.",
 			helpers.MentionHtml(muteUser.Id, muteUser.FirstName),
 		),
-		parsemode.Shtml(),
+		helpers.Shtml(),
 	)
 	if err != nil {
 		log.Error(err)
@@ -627,8 +622,7 @@ func (m mutesModuleStruct) unmute(b *gotgbot.Bot, ctx *ext.Context) error {
 }
 
 func LoadMutes(dispatcher *ext.Dispatcher) {
-
-	HelpModule.AbleMap.Store(mutesModule.modname, true)
+	HelpModule.AbleMap.Store(mutesModule.moduleName, true)
 
 	dispatcher.AddHandler(handlers.NewCommand("mute", mutesModule.mute))
 	dispatcher.AddHandler(handlers.NewCommand("smute", mutesModule.sMute))

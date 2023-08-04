@@ -7,13 +7,13 @@ import (
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	"github.com/eko/gocache/v3/store"
+	"github.com/eko/gocache/lib/v4/store"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Divkix/Alita_Robot/alita/db"
-	"github.com/Divkix/Alita_Robot/alita/utils/cache"
-	"github.com/Divkix/Alita_Robot/alita/utils/error_handling"
-	"github.com/Divkix/Alita_Robot/alita/utils/string_handling"
+	"github.com/divideprojects/Alita_Robot/alita/db"
+	"github.com/divideprojects/Alita_Robot/alita/utils/cache"
+	"github.com/divideprojects/Alita_Robot/alita/utils/error_handling"
+	"github.com/divideprojects/Alita_Robot/alita/utils/string_handling"
 )
 
 // 1087968824 - Group Anonymous Bot (For anonymous users)

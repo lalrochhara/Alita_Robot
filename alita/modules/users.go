@@ -8,22 +8,17 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 
-	"github.com/Divkix/Alita_Robot/alita/db"
-	"github.com/Divkix/Alita_Robot/alita/utils/chat_status"
-	"github.com/Divkix/Alita_Robot/alita/utils/helpers"
+	"github.com/divideprojects/Alita_Robot/alita/db"
+	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
 )
 
-type usersModuleStruct struct {
-	modname      string
-	handlerGroup int
-}
-
-var usersModule = usersModuleStruct{
-	modname:      "Users",
+var usersModule = moduleStruct{
+	moduleName:   "Users",
 	handlerGroup: -1,
 }
 
-func (m usersModuleStruct) logUsers(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) logUsers(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender
@@ -100,6 +95,5 @@ func (m usersModuleStruct) logUsers(bot *gotgbot.Bot, ctx *ext.Context) error {
 }
 
 func LoadUsers(dispatcher *ext.Dispatcher) {
-
 	dispatcher.AddHandlerToGroup(handlers.NewMessage(message.All, usersModule.logUsers), usersModule.handlerGroup)
 }

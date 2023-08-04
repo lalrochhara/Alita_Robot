@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eko/gocache/v3/store"
+	"github.com/eko/gocache/lib/v4/store"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -15,20 +15,15 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/chatjoinrequest"
 
-	"github.com/Divkix/Alita_Robot/alita/db"
-	"github.com/Divkix/Alita_Robot/alita/utils/cache"
-	"github.com/Divkix/Alita_Robot/alita/utils/chat_status"
-	"github.com/Divkix/Alita_Robot/alita/utils/helpers"
-	"github.com/Divkix/Alita_Robot/alita/utils/parsemode"
+	"github.com/divideprojects/Alita_Robot/alita/db"
+	"github.com/divideprojects/Alita_Robot/alita/utils/cache"
+	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
 )
 
-type greetingsModuleStruct struct {
-	modname string
-}
+var greetingsModule = moduleStruct{moduleName: "Greetings"}
 
-var greetingsModule = greetingsModuleStruct{modname: "Greetings"}
-
-func (m greetingsModuleStruct) welcome(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) welcome(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -52,7 +47,7 @@ func (m greetingsModuleStruct) welcome(bot *gotgbot.Bot, ctx *ext.Context) error
 			"\nThe welcome message not filling the {} is:",
 			welcPrefs.WelcomeSettings.ShouldWelcome,
 			welcPrefs.WelcomeSettings.CleanWelcome,
-			welcPrefs.ShouldCleanService), parsemode.Shtml())
+			welcPrefs.ShouldCleanService), helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -83,12 +78,12 @@ func (m greetingsModuleStruct) welcome(bot *gotgbot.Bot, ctx *ext.Context) error
 		switch strings.ToLower(args[0]) {
 		case "on", "yes":
 			db.SetWelcomeToggle(chat.Id, true)
-			_, err = msg.Reply(bot, "I'll welcome users from now on.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'll welcome users from now on.", helpers.Shtml())
 		case "off", "no":
 			db.SetWelcomeToggle(chat.Id, false)
-			_, err = msg.Reply(bot, "I'll not welcome users from now on.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'll not welcome users from now on.", helpers.Shtml())
 		default:
-			_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", helpers.Shtml())
 		}
 
 		if err != nil {
@@ -99,7 +94,7 @@ func (m greetingsModuleStruct) welcome(bot *gotgbot.Bot, ctx *ext.Context) error
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) setWelcome(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) setWelcome(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -117,7 +112,7 @@ func (m greetingsModuleStruct) setWelcome(bot *gotgbot.Bot, ctx *ext.Context) er
 
 	text, dataType, content, buttons, errorMsg := helpers.GetWelcomeType(msg, "welcome")
 	if dataType == -1 {
-		_, err := msg.Reply(bot, errorMsg, parsemode.Shtml())
+		_, err := msg.Reply(bot, errorMsg, helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -126,7 +121,7 @@ func (m greetingsModuleStruct) setWelcome(bot *gotgbot.Bot, ctx *ext.Context) er
 	}
 
 	db.SetWelcomeText(chat.Id, text, content, buttons, dataType)
-	_, err := msg.Reply(bot, "Successfully set custom welcome message!", parsemode.Shtml())
+	_, err := msg.Reply(bot, "Successfully set custom welcome message!", helpers.Shtml())
 	if err != nil {
 		log.Error(err)
 		return err
@@ -135,7 +130,7 @@ func (m greetingsModuleStruct) setWelcome(bot *gotgbot.Bot, ctx *ext.Context) er
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) resetWelcome(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) resetWelcome(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -151,7 +146,7 @@ func (m greetingsModuleStruct) resetWelcome(bot *gotgbot.Bot, ctx *ext.Context) 
 	}
 
 	go db.SetWelcomeText(chat.Id, db.DefaultWelcome, "", nil, db.TEXT)
-	_, err := msg.Reply(bot, "Successfully reset custom welcome message to default!", parsemode.Shtml())
+	_, err := msg.Reply(bot, "Successfully reset custom welcome message to default!", helpers.Shtml())
 	if err != nil {
 		log.Error(err)
 		return err
@@ -160,7 +155,7 @@ func (m greetingsModuleStruct) resetWelcome(bot *gotgbot.Bot, ctx *ext.Context) 
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) goodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) goodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -184,7 +179,7 @@ func (m greetingsModuleStruct) goodbye(bot *gotgbot.Bot, ctx *ext.Context) error
 			"\nThe goodbye message not filling the {} is:",
 			gdbyePrefs.GoodbyeSettings.ShouldGoodbye,
 			gdbyePrefs.GoodbyeSettings.CleanGoodbye,
-			gdbyePrefs.ShouldCleanService), parsemode.Shtml())
+			gdbyePrefs.ShouldCleanService), helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -214,12 +209,12 @@ func (m greetingsModuleStruct) goodbye(bot *gotgbot.Bot, ctx *ext.Context) error
 		switch strings.ToLower(args[0]) {
 		case "on", "yes":
 			db.SetGoodbyeToggle(chat.Id, true)
-			_, err = msg.Reply(bot, "I'll goodbye users from now on.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'll goodbye users from now on.", helpers.Shtml())
 		case "off", "no":
 			db.SetGoodbyeToggle(chat.Id, false)
-			_, err = msg.Reply(bot, "I'll not goodbye users from now on.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'll not goodbye users from now on.", helpers.Shtml())
 		default:
-			_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", helpers.Shtml())
 		}
 		if err != nil {
 			log.Error(err)
@@ -229,7 +224,7 @@ func (m greetingsModuleStruct) goodbye(bot *gotgbot.Bot, ctx *ext.Context) error
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) setGoodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) setGoodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -246,7 +241,7 @@ func (m greetingsModuleStruct) setGoodbye(bot *gotgbot.Bot, ctx *ext.Context) er
 
 	text, dataType, content, buttons, errorMsg := helpers.GetWelcomeType(msg, "goodbye")
 	if dataType == -1 {
-		_, err := msg.Reply(bot, errorMsg, parsemode.Shtml())
+		_, err := msg.Reply(bot, errorMsg, helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -255,7 +250,7 @@ func (m greetingsModuleStruct) setGoodbye(bot *gotgbot.Bot, ctx *ext.Context) er
 	}
 
 	db.SetGoodbyeText(chat.Id, text, content, buttons, dataType)
-	_, err := msg.Reply(bot, "Successfully set custom goodbye message!", parsemode.Shtml())
+	_, err := msg.Reply(bot, "Successfully set custom goodbye message!", helpers.Shtml())
 	if err != nil {
 		log.Error(err)
 		return err
@@ -263,7 +258,7 @@ func (m greetingsModuleStruct) setGoodbye(bot *gotgbot.Bot, ctx *ext.Context) er
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) resetGoodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) resetGoodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -283,7 +278,7 @@ func (m greetingsModuleStruct) resetGoodbye(bot *gotgbot.Bot, ctx *ext.Context) 
 		return ext.EndGroups
 	}
 	go db.SetGoodbyeText(chat.Id, db.DefaultGoodbye, "", nil, db.TEXT)
-	_, err := msg.Reply(bot, "Successfully reset custom goodbye message to default!", parsemode.Shtml())
+	_, err := msg.Reply(bot, "Successfully reset custom goodbye message to default!", helpers.Shtml())
 	if err != nil {
 		log.Error(err)
 		return err
@@ -291,7 +286,7 @@ func (m greetingsModuleStruct) resetGoodbye(bot *gotgbot.Bot, ctx *ext.Context) 
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) cleanWelcome(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) cleanWelcome(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, false)
@@ -312,9 +307,9 @@ func (m greetingsModuleStruct) cleanWelcome(bot *gotgbot.Bot, ctx *ext.Context) 
 		var err error
 		cleanPref := db.GetGreetingSettings(chat.Id).WelcomeSettings.CleanWelcome
 		if !cleanPref {
-			_, err = msg.Reply(bot, "I should be deleting welcome messages up to two days old.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I should be deleting welcome messages up to two days old.", helpers.Shtml())
 		} else {
-			_, err = msg.Reply(bot, "I'm currently not deleting old welcome messages!", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'm currently not deleting old welcome messages!", helpers.Shtml())
 		}
 		if err != nil {
 			log.Error(err)
@@ -326,12 +321,12 @@ func (m greetingsModuleStruct) cleanWelcome(bot *gotgbot.Bot, ctx *ext.Context) 
 	switch strings.ToLower(args[0]) {
 	case "off", "no":
 		db.SetCleanWelcomeSetting(chat.Id, false)
-		_, err = msg.Reply(bot, "I'll not delete old welcome messages!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I'll not delete old welcome messages!", helpers.Shtml())
 	case "on", "yes":
 		db.SetCleanWelcomeSetting(chat.Id, true)
-		_, err = msg.Reply(bot, "I'll try to delete old welcome messages!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I'll try to delete old welcome messages!", helpers.Shtml())
 	default:
-		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", helpers.Shtml())
 	}
 
 	if err != nil {
@@ -341,7 +336,7 @@ func (m greetingsModuleStruct) cleanWelcome(bot *gotgbot.Bot, ctx *ext.Context) 
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) cleanGoodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) cleanGoodbye(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	args := ctx.Args()[1:]
 	var err error
@@ -362,9 +357,9 @@ func (m greetingsModuleStruct) cleanGoodbye(bot *gotgbot.Bot, ctx *ext.Context) 
 		var err error
 		cleanPref := db.GetGreetingSettings(chat.Id).GoodbyeSettings.CleanGoodbye
 		if !cleanPref {
-			_, err = msg.Reply(bot, "I should be deleting welcome messages up to two days old.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I should be deleting welcome messages up to two days old.", helpers.Shtml())
 		} else {
-			_, err = msg.Reply(bot, "I'm currently not deleting old welcome messages!", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'm currently not deleting old welcome messages!", helpers.Shtml())
 		}
 		if err != nil {
 			log.Error(err)
@@ -376,12 +371,12 @@ func (m greetingsModuleStruct) cleanGoodbye(bot *gotgbot.Bot, ctx *ext.Context) 
 	switch strings.ToLower(args[0]) {
 	case "off", "no":
 		db.SetCleanGoodbyeSetting(chat.Id, false)
-		_, err = msg.Reply(bot, "I'll not delete old goodbye messages!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I'll not delete old goodbye messages!", helpers.Shtml())
 	case "on", "yes":
 		db.SetCleanGoodbyeSetting(chat.Id, true)
-		_, err = msg.Reply(bot, "I'll try to delete old goodbye messages!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I'll try to delete old goodbye messages!", helpers.Shtml())
 	default:
-		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", helpers.Shtml())
 	}
 
 	if err != nil {
@@ -391,7 +386,7 @@ func (m greetingsModuleStruct) cleanGoodbye(bot *gotgbot.Bot, ctx *ext.Context) 
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) delJoined(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) delJoined(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	args := ctx.Args()[1:]
 	var err error
@@ -411,9 +406,9 @@ func (m greetingsModuleStruct) delJoined(bot *gotgbot.Bot, ctx *ext.Context) err
 	if len(args) == 0 {
 		delPref := db.GetGreetingSettings(chat.Id).ShouldCleanService
 		if delPref {
-			_, err = msg.Reply(bot, "I should be deleting `user` joined the chat messages now.", parsemode.Smarkdown())
+			_, err = msg.Reply(bot, "I should be deleting `user` joined the chat messages now.", helpers.Smarkdown())
 		} else {
-			_, err = msg.Reply(bot, "I'm currently not deleting joined messages.", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'm currently not deleting joined messages.", helpers.Shtml())
 		}
 		if err != nil {
 			log.Error(err)
@@ -425,12 +420,12 @@ func (m greetingsModuleStruct) delJoined(bot *gotgbot.Bot, ctx *ext.Context) err
 	switch strings.ToLower(args[0]) {
 	case "off", "no":
 		db.SetShouldCleanService(chat.Id, false)
-		_, err = msg.Reply(bot, "I won't delete joined messages.", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I won't delete joined messages.", helpers.Shtml())
 	case "on", "yes":
 		db.SetShouldCleanService(chat.Id, true)
-		_, err = msg.Reply(bot, "I'll try to delete joined messages!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I'll try to delete joined messages!", helpers.Shtml())
 	default:
-		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", helpers.Shtml())
 	}
 
 	if err != nil {
@@ -440,7 +435,7 @@ func (m greetingsModuleStruct) delJoined(bot *gotgbot.Bot, ctx *ext.Context) err
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) newMember(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) newMember(bot *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	newMember := ctx.ChatMember.NewChatMember.MergeChatMember().User
 	greetPrefs := db.GetGreetingSettings(chat.Id)
@@ -479,7 +474,7 @@ func (m greetingsModuleStruct) newMember(bot *gotgbot.Bot, ctx *ext.Context) err
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) leftMember(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) leftMember(bot *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.EffectiveChat
 	leftMember := ctx.ChatMember.OldChatMember.MergeChatMember().User
 	greetPrefs := db.GetGreetingSettings(chat.Id)
@@ -515,7 +510,7 @@ func (m greetingsModuleStruct) leftMember(bot *gotgbot.Bot, ctx *ext.Context) er
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) cleanService(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) cleanService(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	chat := ctx.EffectiveChat
 	user := ctx.EffectiveSender.User
@@ -536,7 +531,7 @@ func (m greetingsModuleStruct) cleanService(bot *gotgbot.Bot, ctx *ext.Context) 
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) pendingJoins(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (m moduleStruct) pendingJoins(bot *gotgbot.Bot, ctx *ext.Context) error {
 	chat := ctx.ChatJoinRequest.Chat
 	user := ctx.ChatJoinRequest.From
 	joinReqStr := "join_request"
@@ -557,7 +552,7 @@ func (m greetingsModuleStruct) pendingJoins(bot *gotgbot.Bot, ctx *ext.Context) 
 				fmt.Sprintf("\nUser ID: %d", user.Id),
 			),
 			&gotgbot.SendMessageOpts{
-				ParseMode: parsemode.HTML,
+				ParseMode: helpers.HTML,
 				ReplyMarkup: gotgbot.InlineKeyboardMarkup{
 					InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 						{
@@ -591,7 +586,7 @@ func (m greetingsModuleStruct) pendingJoins(bot *gotgbot.Bot, ctx *ext.Context) 
 	return ext.ContinueGroups
 }
 
-func (m greetingsModuleStruct) joinRequestHandler(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) joinRequestHandler(b *gotgbot.Bot, ctx *ext.Context) error {
 	query := ctx.Update.CallbackQuery
 	user := query.From
 	chat := ctx.EffectiveChat
@@ -629,7 +624,7 @@ func (m greetingsModuleStruct) joinRequestHandler(b *gotgbot.Bot, ctx *ext.Conte
 	_, _, err = msg.EditText(b,
 		fmt.Sprintf(helpText, helpers.MentionHtml(joinUser.Id, joinUser.FirstName)),
 		&gotgbot.EditMessageTextOpts{
-			ParseMode: parsemode.HTML,
+			ParseMode: helpers.HTML,
 		},
 	)
 	if err != nil {
@@ -650,7 +645,7 @@ func (m greetingsModuleStruct) joinRequestHandler(b *gotgbot.Bot, ctx *ext.Conte
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) autoApprove(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) autoApprove(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	args := ctx.Args()[1:]
 	var err error
@@ -671,9 +666,9 @@ func (m greetingsModuleStruct) autoApprove(bot *gotgbot.Bot, ctx *ext.Context) e
 	if len(args) == 0 {
 		delPref := db.GetGreetingSettings(chat.Id).ShouldAutoApprove
 		if delPref {
-			_, err = msg.Reply(bot, "I'm auto-approving new chat join requests now.", parsemode.Smarkdown())
+			_, err = msg.Reply(bot, "I'm auto-approving new chat join requests now.", helpers.Smarkdown())
 		} else {
-			_, err = msg.Reply(bot, "I'm not auto-approving new chat join requests now..", parsemode.Shtml())
+			_, err = msg.Reply(bot, "I'm not auto-approving new chat join requests now..", helpers.Shtml())
 		}
 		if err != nil {
 			log.Error(err)
@@ -685,12 +680,12 @@ func (m greetingsModuleStruct) autoApprove(bot *gotgbot.Bot, ctx *ext.Context) e
 	switch strings.ToLower(args[0]) {
 	case "off", "no":
 		db.SetShouldAutoApprove(chat.Id, false)
-		_, err = msg.Reply(bot, "I won't auto-approve new join requests!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I won't auto-approve new join requests!", helpers.Shtml())
 	case "on", "yes":
 		db.SetShouldAutoApprove(chat.Id, true)
-		_, err = msg.Reply(bot, "I'll try to auto-approve new join requests!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I'll try to auto-approve new join requests!", helpers.Shtml())
 	default:
-		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", parsemode.Shtml())
+		_, err = msg.Reply(bot, "I understand 'on/yes' or 'off/no' only!", helpers.Shtml())
 	}
 
 	if err != nil {
@@ -701,7 +696,7 @@ func (m greetingsModuleStruct) autoApprove(bot *gotgbot.Bot, ctx *ext.Context) e
 	return ext.EndGroups
 }
 
-func (m greetingsModuleStruct) loadPendingJoins(chatId, userId int64) bool {
+func (moduleStruct) loadPendingJoins(chatId, userId int64) bool {
 	alreadyAsked, _ := cache.Marshal.Get(cache.Context, fmt.Sprintf("pendingJoins.%d.%d", chatId, userId), new(bool))
 	if alreadyAsked == nil || !alreadyAsked.(bool) {
 		return false
@@ -709,16 +704,15 @@ func (m greetingsModuleStruct) loadPendingJoins(chatId, userId int64) bool {
 	return true
 }
 
-func (m greetingsModuleStruct) setPendingJoins(chatId, userId int64) {
+func (moduleStruct) setPendingJoins(chatId, userId int64) {
 	_ = cache.Marshal.Set(cache.Context, fmt.Sprintf("pendingJoins.%d.%d", chatId, userId), true, store.WithExpiration(5*time.Minute))
 }
 
 func LoadGreetings(dispatcher *ext.Dispatcher) {
-
-	HelpModule.AbleMap.Store(greetingsModule.modname, true)
+	HelpModule.AbleMap.Store(greetingsModule.moduleName, true)
 
 	// Adds Formatting kb button to Greetings Menu
-	HelpModule.helpableKb[greetingsModule.modname] = [][]gotgbot.InlineKeyboardButton{
+	HelpModule.helpableKb[greetingsModule.moduleName] = [][]gotgbot.InlineKeyboardButton{
 		{
 			{
 				Text:         "Formatting",

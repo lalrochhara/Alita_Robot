@@ -5,16 +5,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Divkix/Alita_Robot/alita/config"
-	"github.com/Divkix/Alita_Robot/alita/db"
-	"github.com/Divkix/Alita_Robot/alita/utils/parsemode"
-	"github.com/Divkix/Alita_Robot/alita/utils/string_handling"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
+	"github.com/divideprojects/Alita_Robot/alita/config"
+	"github.com/divideprojects/Alita_Robot/alita/db"
+
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
+	"github.com/divideprojects/Alita_Robot/alita/utils/string_handling"
 	log "github.com/sirupsen/logrus"
 )
 
-func (m devsModuleStruct) dbClean(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) dbClean(b *gotgbot.Bot, ctx *ext.Context) error {
 	user := ctx.EffectiveSender.User
 	memStatus := db.GetTeamMemInfo(user.Id)
 
@@ -29,7 +30,7 @@ func (m devsModuleStruct) dbClean(b *gotgbot.Bot, ctx *ext.Context) error {
 		b,
 		"What do you want to clean?",
 		&gotgbot.SendMessageOpts{
-			ParseMode: parsemode.HTML,
+			ParseMode: helpers.HTML,
 			ReplyMarkup: gotgbot.InlineKeyboardMarkup{
 				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 					{{Text: "Chats", CallbackData: "dbclean.chats"}},
@@ -45,7 +46,7 @@ func (m devsModuleStruct) dbClean(b *gotgbot.Bot, ctx *ext.Context) error {
 	return ext.EndGroups
 }
 
-func (m devsModuleStruct) buttonHandler(b *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) dbCleanButtonHandler(b *gotgbot.Bot, ctx *ext.Context) error {
 	query := ctx.Update.CallbackQuery
 	user := ctx.EffectiveSender.User
 	msg := query.Message

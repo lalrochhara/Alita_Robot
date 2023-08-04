@@ -6,21 +6,75 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
-	log "github.com/sirupsen/logrus"
+	"github.com/divideprojects/Alita_Robot/alita/db"
+	"github.com/divideprojects/Alita_Robot/alita/i18n"
+	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
 
+	"github.com/divideprojects/Alita_Robot/alita/utils/string_handling"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-
-	"github.com/Divkix/Alita_Robot/alita/db"
-	"github.com/Divkix/Alita_Robot/alita/i18n"
-	"github.com/Divkix/Alita_Robot/alita/utils/chat_status"
-	"github.com/Divkix/Alita_Robot/alita/utils/helpers"
-	"github.com/Divkix/Alita_Robot/alita/utils/parsemode"
-	"github.com/Divkix/Alita_Robot/alita/utils/string_handling"
 )
+
+// module struct for all modules
+type moduleStruct struct {
+	moduleName          string
+	handlerGroup        int
+	permHandlerGroup    int
+	restrHandlerGroup   int
+	defaultRulesBtn     string
+	overwriteFiltersMap map[string]overwriteFilter
+	overwriteNotesMap   map[string]overwriteNote
+	antiSpam            map[int64]*antiSpamInfo
+	AbleMap             moduleEnabled
+	AltHelpOptions      map[string][]string
+	helpableKb          map[string][][]gotgbot.InlineKeyboardButton
+}
+
+// struct for filters module
+type overwriteFilter struct {
+	filterWord string
+	text       string
+	fileid     string
+	buttons    []db.Button
+	dataType   int
+}
+
+// struct for notes module
+type overwriteNote struct {
+	noteWord    string
+	text        string
+	fileId      string
+	buttons     []db.Button
+	dataType    int
+	pvtOnly     bool
+	grpOnly     bool
+	adminOnly   bool
+	webPrev     bool
+	isProtected bool
+	noNotif     bool
+}
+
+// struct for antiSpam module - antiSpamInfo
+type antiSpamInfo struct {
+	Levels []antiSpamLevel
+}
+
+// struct for antiSpam module - antiSpamLevel
+type antiSpamLevel struct {
+	Count    int
+	Limit    int
+	CurrTime time.Duration
+	Expiry   time.Duration
+	Spammed  bool
+}
+
+// helper functions for help module
 
 // This var is used to add the back button to the help menu
 // i.e. where modules are shown
@@ -60,7 +114,21 @@ func getModuleHelpAndKb(module, lang string) (helpText string, replyMarkup gotgb
 }
 
 func sendHelpkb(b *gotgbot.Bot, ctx *ext.Context, module string) (msg *gotgbot.Message, err error) {
-	helpText, replyMarkup, _parsemode := getHelpTextAndMarkup(ctx, strings.ToLower(module))
+	module = strings.ToLower(module)
+	if module == "help" {
+		_, err = b.SendMessage(ctx.EffectiveMessage.Chat.Id,
+			fmt.Sprintf(
+				mainhlp,
+				html.EscapeString(msg.From.FirstName),
+			),
+			&gotgbot.SendMessageOpts{
+				ParseMode:   helpers.HTML,
+				ReplyMarkup: &markup,
+			},
+		)
+		return
+	}
+	helpText, replyMarkup, _parsemode := getHelpTextAndMarkup(ctx, module)
 
 	msg, err = b.SendMessage(
 		ctx.EffectiveChat.Id,
@@ -119,7 +187,7 @@ func startHelpPrefixHandler(b *gotgbot.Bot, ctx *ext.Context, user *gotgbot.User
 		rulesrc := db.GetChatRulesInfo(int64(chatID))
 
 		if rulesrc.Rules == "" {
-			_, err := msg.Reply(b, "This chat does not have any rules!", parsemode.Shtml())
+			_, err := msg.Reply(b, "This chat does not have any rules!", helpers.Shtml())
 			if err != nil {
 				log.Error(err)
 				return err
@@ -128,7 +196,7 @@ func startHelpPrefixHandler(b *gotgbot.Bot, ctx *ext.Context, user *gotgbot.User
 		}
 
 		Text := fmt.Sprintf("Rules for <b>%s</b>:\n\n%s", chatinfo.Title, rulesrc.Rules)
-		_, err := msg.Reply(b, Text, parsemode.Shtml())
+		_, err := msg.Reply(b, Text, helpers.Shtml())
 		if err != nil {
 			log.Error(err)
 			return err
@@ -150,7 +218,7 @@ func startHelpPrefixHandler(b *gotgbot.Bot, ctx *ext.Context, user *gotgbot.User
 				}
 			}
 
-			_, err := msg.Reply(b, info, parsemode.Shtml())
+			_, err := msg.Reply(b, info, helpers.Shtml())
 			if err != nil {
 				log.Error(err)
 				return err
@@ -159,7 +227,7 @@ func startHelpPrefixHandler(b *gotgbot.Bot, ctx *ext.Context, user *gotgbot.User
 			noteName := strings.ToLower(nArgs[2])
 			noteData := db.GetNote(chatinfo.Id, noteName)
 			if noteData == nil {
-				_, err := msg.Reply(b, "This note does not exist!", parsemode.Shtml())
+				_, err := msg.Reply(b, "This note does not exist!", helpers.Shtml())
 				if err != nil {
 					log.Error(err)
 					return err
@@ -168,7 +236,7 @@ func startHelpPrefixHandler(b *gotgbot.Bot, ctx *ext.Context, user *gotgbot.User
 			}
 			if noteData.AdminOnly {
 				if !chat_status.IsUserAdmin(b, int64(chatID), user.Id) {
-					_, err := msg.Reply(b, "This note can only be accessed by a admin!", parsemode.Shtml())
+					_, err := msg.Reply(b, "This note can only be accessed by a admin!", helpers.Shtml())
 					if err != nil {
 						log.Error(err)
 						return err
@@ -202,7 +270,7 @@ func startHelpPrefixHandler(b *gotgbot.Bot, ctx *ext.Context, user *gotgbot.User
 		_, err := b.SendMessage(chat.Id,
 			startHelp,
 			&gotgbot.SendMessageOpts{
-				ParseMode:             parsemode.HTML,
+				ParseMode:             helpers.HTML,
 				DisableWebPagePreview: true,
 				ReplyMarkup:           &startMarkup,
 			},
@@ -236,10 +304,10 @@ func getHelpTextAndMarkup(ctx *ext.Context, module string) (helpText string, kbm
 
 	// compare and check if module name is not empty
 	if moduleName != "" {
-		_parsemode = parsemode.Markdown
+		_parsemode = helpers.Markdown
 		helpText, kbmarkup = getModuleHelpAndKb(moduleName, userOrGroupLanguage)
 	} else {
-		_parsemode = parsemode.HTML
+		_parsemode = helpers.HTML
 		helpText = fmt.Sprintf(mainhlp, html.EscapeString(ctx.EffectiveUser.FirstName))
 		kbmarkup = markup
 	}

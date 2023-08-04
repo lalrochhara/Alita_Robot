@@ -12,11 +12,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
 
-	"github.com/Divkix/Alita_Robot/alita/config"
-	"github.com/Divkix/Alita_Robot/alita/utils/cache"
-	"github.com/Divkix/Alita_Robot/alita/utils/chat_status"
-	"github.com/Divkix/Alita_Robot/alita/utils/helpers"
-	"github.com/Divkix/Alita_Robot/alita/utils/parsemode"
+	"github.com/divideprojects/Alita_Robot/alita/utils/cache"
+	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
 )
 
 // function used to get status of bot when it joined a group and send a message to the group
@@ -41,7 +39,7 @@ func botJoinedGroup(b *gotgbot.Bot, ctx *ext.Context) error {
 					"To convert this group to a supergroup, please follow the instructions here:\n",
 					"https://telegra.ph/Convert-group-to-Supergroup-07-29",
 				),
-				parsemode.Shtml(),
+				helpers.Shtml(),
 			)
 			if err != nil {
 				log.Error(err)
@@ -58,38 +56,15 @@ func botJoinedGroup(b *gotgbot.Bot, ctx *ext.Context) error {
 		return ext.EndGroups
 	}
 
-	var (
-		adminStatus = "False"
-		msgAdmin    = "\n\nMake me admin to use me with my full abilities!"
-	)
+	msgAdmin := "\n\nMake me admin to use me with my full abilities!"
 
 	// used to check if bot was added as admin or not
 	if chat_status.IsBotAdmin(b, ctx, nil) {
-		adminStatus = "True"
 		msgAdmin = ""
 	}
 
-	// send a msg to message dump
-	_, err := b.SendMessage(
-		config.LogChannel,
-		fmt.Sprintf(
-			"#NEW_JOIN"+
-				"\n<b>Group Name:</b> <i>%s</i>"+
-				"\n<b>Chat ID:</b> <code>%d</code>"+
-				"\n<b>Admin Status:</b> <i>%s</i>",
-			chat.Title,
-			chat.Id,
-			adminStatus,
-		),
-		parsemode.Shtml(),
-	)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-
 	// send a message to group itself
-	_, err = b.SendMessage(
+	_, err := b.SendMessage(
 		chat.Id,
 		fmt.Sprint(
 			"Thanks for adding me in your group!",
@@ -239,7 +214,6 @@ func setAdminCache(chatId, msgId int64) (interface{}, error) {
 }
 
 func LoadBotUpdates(dispatcher *ext.Dispatcher) {
-
 	dispatcher.AddHandlerToGroup(
 		handlers.NewMyChatMember(
 			func(u *gotgbot.ChatMemberUpdated) bool {

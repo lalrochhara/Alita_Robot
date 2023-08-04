@@ -11,26 +11,20 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 
-	"github.com/Divkix/Alita_Robot/alita/db"
-	"github.com/Divkix/Alita_Robot/alita/utils/chat_status"
-	"github.com/Divkix/Alita_Robot/alita/utils/helpers"
+	"github.com/divideprojects/Alita_Robot/alita/db"
+	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
+	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
 
-	"github.com/Divkix/Alita_Robot/alita/utils/decorators/cmdDecorator"
-	"github.com/Divkix/Alita_Robot/alita/utils/decorators/misc"
-	"github.com/Divkix/Alita_Robot/alita/utils/parsemode"
+	"github.com/divideprojects/Alita_Robot/alita/utils/decorators/cmdDecorator"
+	"github.com/divideprojects/Alita_Robot/alita/utils/decorators/misc"
 )
 
-type rulesModuleStruct struct {
-	modname         string
-	defaultRulesBtn string
-}
-
-var rulesModule = rulesModuleStruct{
-	modname:         "Rules",
+var rulesModule = moduleStruct{
+	moduleName:      "Rules",
 	defaultRulesBtn: "Rules",
 }
 
-func (m rulesModuleStruct) clearRules(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) clearRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	chat := ctx.EffectiveChat
 
@@ -44,7 +38,7 @@ func (m rulesModuleStruct) clearRules(bot *gotgbot.Bot, ctx *ext.Context) error 
 	return ext.EndGroups
 }
 
-func (m rulesModuleStruct) privaterules(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) privaterules(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, true)
@@ -85,7 +79,7 @@ func (m rulesModuleStruct) privaterules(bot *gotgbot.Bot, ctx *ext.Context) erro
 	return ext.EndGroups
 }
 
-func (m rulesModuleStruct) sendRules(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (m moduleStruct) sendRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// if command is disabled, return
 	if chat_status.CheckDisabledCmd(bot, msg, "adminlist") {
@@ -143,7 +137,7 @@ func (m rulesModuleStruct) sendRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 			ReplyMarkup:              rulesKb,
 			ReplyToMessageId:         replyMsgId,
 			AllowSendingWithoutReply: true,
-			ParseMode:                parsemode.HTML,
+			ParseMode:                helpers.HTML,
 		},
 	)
 	if err != nil {
@@ -154,7 +148,7 @@ func (m rulesModuleStruct) sendRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 	return ext.EndGroups
 }
 
-func (m rulesModuleStruct) setRules(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) setRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, true)
@@ -178,7 +172,7 @@ func (m rulesModuleStruct) setRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 		text = "Successfully set rules for this group!"
 	}
 
-	_, err := msg.Reply(bot, text, parsemode.Shtml())
+	_, err := msg.Reply(bot, text, helpers.Shtml())
 	if err != nil {
 		log.Error(err)
 		return err
@@ -187,7 +181,7 @@ func (m rulesModuleStruct) setRules(bot *gotgbot.Bot, ctx *ext.Context) error {
 	return ext.EndGroups
 }
 
-func (m rulesModuleStruct) rulesBtn(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (m moduleStruct) rulesBtn(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, true)
@@ -222,7 +216,7 @@ func (m rulesModuleStruct) rulesBtn(bot *gotgbot.Bot, ctx *ext.Context) error {
 		}
 	}
 
-	_, err = msg.Reply(bot, text, parsemode.Shtml())
+	_, err = msg.Reply(bot, text, helpers.Shtml())
 	if err != nil {
 		log.Error(err)
 		return err
@@ -231,7 +225,7 @@ func (m rulesModuleStruct) rulesBtn(bot *gotgbot.Bot, ctx *ext.Context) error {
 	return ext.EndGroups
 }
 
-func (m rulesModuleStruct) resetRulesBtn(bot *gotgbot.Bot, ctx *ext.Context) error {
+func (moduleStruct) resetRulesBtn(bot *gotgbot.Bot, ctx *ext.Context) error {
 	msg := ctx.EffectiveMessage
 	// connection status
 	connectedChat := helpers.IsUserConnected(bot, ctx, true, true)
@@ -252,8 +246,7 @@ func (m rulesModuleStruct) resetRulesBtn(bot *gotgbot.Bot, ctx *ext.Context) err
 }
 
 func LoadRules(dispatcher *ext.Dispatcher) {
-
-	HelpModule.AbleMap.Store(rulesModule.modname, true)
+	HelpModule.AbleMap.Store(rulesModule.moduleName, true)
 
 	dispatcher.AddHandler(handlers.NewCommand("rules", rulesModule.sendRules))
 	misc.AddCmdToDisableable("rules")
