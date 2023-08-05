@@ -68,7 +68,7 @@ func botJoinedGroup(b *gotgbot.Bot, ctx *ext.Context) error {
 		chat.Id,
 		fmt.Sprint(
 			"Thanks for adding me in your group!",
-			"\nCheckout @DivideProjects for more such useful bots from my creators.",
+			"\nCheckout @SangteiSupport for more such useful bots from my creators.",
 			msgAdmin,
 		),
 		nil,
