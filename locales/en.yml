@@ -396,7 +396,7 @@ strings:
 
   Filters:
     help_msg: |-
-      Filters are case insensitive; every time someone says your trigger words, Alita will reply something else! This can be used to create your commands, if desired.
+      Filters are case insensitive; every time someone says your trigger words, Miss Sangtei will reply something else! This can be used to create your commands, if desired.
 
       Commands:
       - /filter <trigger> <reply>: Every time someone says trigger, the bot will reply with sentence. For multiple word filters, quote the trigger.
@@ -416,7 +416,7 @@ strings:
 
   Formatting:
     help_msg: |-
-      Alita supports a large number of formatting options to make your messages more expressive. Take a look by clicking the buttons below!
+      Miss Sangtei supports a large number of formatting options to make your messages more expressive. Take a look by clicking the buttons below!
     Markdown: |-
       <b>Markdown Formatting</b>
 
@@ -467,7 +467,7 @@ strings:
       %%%
       how are you</code>
       This will randomly choose between sending the first message, "hello", or the second message, "how are you".
-      Use this to make Alita feel a bit more customised! (only works in filters/notes)
+      Use this to make Miss Sangtei feel a bit more customised! (only works in filters/notes)
       Example welcome message:
       - Every time a new user joins, they'll be presented with one of the three messages shown here.
       -> /filter "hey"
@@ -496,11 +496,11 @@ strings:
     About: |-
       @%s  is one of the fastest and most feature-filled group managers.
 
-      Alita ✨ is developed and actively maintained by @DivideProjects!
+      Miss Sangtei ✨ is developed and actively maintained by @DivideProjects!
 
-      Alita has been online since 2020 and has served thousands of groups with hundreds of thousands of users!
+      Miss Sangtei has been online since 2020 and has served thousands of groups with hundreds of thousands of users!
 
-      <b>Why Alita:</b>
+      <b>Why Miss Sangtei:</b>
       - Simple: Easy usage and compatible with many bot commands.
       - Featured: Many features which other group management bots don't have.
       - Fast: Guess what? It's not made using Python, we use <a href='https://go.dev/'>Go</a> as our core programming language.
@@ -508,9 +508,9 @@ strings:
       <b>Current Version:</b> %s
     Configuration:
       Step-1: |-
-        Welcome to the Alita Configuration
+        Welcome to the Miss Sangtei Configuration
 
-        The first thing to do is to add Alita ✨ to your group! For doing that, press the under button and select your group, then press Done to continue the tutorial.
+        The first thing to do is to add Miss Sangtei ✨ to your group! For doing that, press the under button and select your group, then press Done to continue the tutorial.
       Step-2: |-
         Ok, well done!
 
@@ -529,14 +529,14 @@ strings:
         Now the Bot is ready to use!
         All commands can be used with / or !
 
-        If you're facing any difficulties in setting up me in your group, so don't hesitate to come in @DivideSupport.
+        If you're facing any difficulties in setting up me in your group, so don't hesitate to come in @SangteiSupport.
         We would love to help you.
     DonateText: |-
       So you want to donate? Amazing!
       When you donate, all the fund goes towards my development which makes on fast and responsive.
       Your donation might also get me a new feature or two, which I wasn't able to get due to server limitations.
       All the funds would be put into my services such as database, storage, and hosting!
-      You can donate by contacting my owner here: @DivideProjectsBot
+      You can donate by contacting my owner here: @NickyLrca
 
   Locks:
     help_msg: |-
