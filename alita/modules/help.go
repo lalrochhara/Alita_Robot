@@ -27,13 +27,13 @@ var HelpModule = moduleStruct{
 }
 
 const (
-	aboutText = "Info & About\n\nHere are some of the FAQs about Alita."
-	startHelp = "Hey there! My name is Alita ✨.\n" +
+	aboutText = "Info & About\n\nHere are some of the FAQs about Miss Sangtei."
+	startHelp = "Hey there! My name is Miss Sangtei ✨.\n" +
 		"I'm here to help you manage your groups!\n" +
 		"Hit /help to find out more about how to use me to my full potential.\n" +
-		"Join my <a href='https://t.me/AlitaRobotUpdates'>News Channel</a> to get information on all the latest updates."
+		"Join my <a href='https://t.me/SangteiUpdates'>Update Channel</a> to get information on all the latest updates."
 	mainhlp = "Hey %s!\n" +
-		"My name is Alita ✨.\n\n" +
+		"My name is Miss Sangtei ✨.\n\n" +
 		"I am a group management bot, here to help you get around and keep the order in your groups!\n" +
 		"I have lots of handy features, such as flood control, a warning system, a note keeping system, " +
 		"and even predetermined replies on certain keywords.\n\n" +
@@ -59,23 +59,23 @@ var (
 		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 			{
 				{
-					Text:         "About me 👨\u200d💻",
+					Text:         "About me",
 					CallbackData: "about.me",
 				},
 			},
 			{
 				{
-					Text: "News Channel 📢",
-					Url:  "https://t.me/AlitaRobotUpdates",
+					Text: "News Channel",
+					Url:  "https://t.me/SangteiUpdates",
 				},
 				{
-					Text: "Support Group 👥",
-					Url:  "https://t.me/DivideSupport",
+					Text: "Support Group",
+					Url:  "https://t.me/SangteiSupport",
 				},
 			},
 			{
 				{
-					Text:         "Configuration ⚙️",
+					Text:         "Configuration",
 					CallbackData: "configuration.step1",
 				},
 			},
@@ -92,29 +92,29 @@ var (
 		InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 			{
 				{
-					Text:         "About ✨",
+					Text:         "About",
 					CallbackData: "about.main",
 				},
 			},
 			{
 				{
-					Text: "➕ Add me to chat!",
-					Url:  "https://t.me/Alita_Robot?startgroup=botstart",
+					Text: "Add me to chat!",
+					Url:  "https://t.me/dSangteiBot?startgroup=botstart",
 				},
 				{
-					Text: "Support Group 👥",
-					Url:  "https://t.me/DivideSupport",
+					Text: "Support Group",
+					Url:  "https://t.me/SangteiSupport",
 				},
 			},
 			{
 				{
-					Text:         "📚 Commands & Help",
+					Text:         "Commands & Help",
 					CallbackData: "helpq.Help",
 				},
 			},
 			{
 				{
-					Text:         "Language 🌏",
+					Text:         "Languages",
 					CallbackData: "helpq.Languages",
 				},
 			},
@@ -373,13 +373,13 @@ func (moduleStruct) botConfig(b *gotgbot.Bot, ctx *ext.Context) error {
 		iKeyboard = [][]gotgbot.InlineKeyboardButton{
 			{
 				{
-					Text: "➕ Add Alita to chat!",
+					Text: "Add Miss Sangtei to chat!",
 					Url:  fmt.Sprintf("https://t.me/%s?startgroup=botstart", b.Username),
 				},
 			},
 			{
 				{
-					Text:         "Done ✅",
+					Text:         "Done",
 					CallbackData: "configuration.step2",
 				},
 			},
@@ -389,7 +389,7 @@ func (moduleStruct) botConfig(b *gotgbot.Bot, ctx *ext.Context) error {
 		iKeyboard = [][]gotgbot.InlineKeyboardButton{
 			{
 				{
-					Text:         "Done ✅",
+					Text:         "Done",
 					CallbackData: "configuration.step3",
 				},
 			},
@@ -399,7 +399,7 @@ func (moduleStruct) botConfig(b *gotgbot.Bot, ctx *ext.Context) error {
 		iKeyboard = [][]gotgbot.InlineKeyboardButton{
 			{
 				{
-					Text:         "✅ Continue ✅",
+					Text:         "Continue",
 					CallbackData: "helpq.Help",
 				},
 			},
