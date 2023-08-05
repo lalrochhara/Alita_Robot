@@ -557,17 +557,17 @@ func (m moduleStruct) pendingJoins(bot *gotgbot.Bot, ctx *ext.Context) error {
 					InlineKeyboard: [][]gotgbot.InlineKeyboardButton{
 						{
 							{
-								Text:         "✅ Approve",
+								Text:         "Approve",
 								CallbackData: fmt.Sprintf("%s.accept.%d", joinReqStr, user.Id),
 							},
 							{
-								Text:         "❌ Decline",
+								Text:         "Decline",
 								CallbackData: fmt.Sprintf("%s.decline.%d", joinReqStr, user.Id),
 							},
 						},
 						{
 							{
-								Text:         "✅ Ban",
+								Text:         "Ban",
 								CallbackData: fmt.Sprintf("%s.ban.%d", joinReqStr, user.Id),
 							},
 						},
@@ -610,15 +610,15 @@ func (moduleStruct) joinRequestHandler(b *gotgbot.Bot, ctx *ext.Context) error {
 	switch response {
 	case "accept":
 		_, _ = b.ApproveChatJoinRequest(chat.Id, joinUser.Id, nil)
-		helpText = "Accepted %s in Chat ✅"
+		helpText = "Accepted %s in Chat"
 		_ = cache.Marshal.Delete(cache.Context, fmt.Sprintf("pendingJoins.%d.%d", chat.Id, joinUser.Id))
 	case "decline":
 		_, _ = b.DeclineChatJoinRequest(chat.Id, joinUser.Id, nil)
-		helpText = "Declined %s to join chat ❌"
+		helpText = "Declined %s to join chat"
 	case "ban":
 		_, _ = chat.BanMember(b, joinUser.Id, nil)
 		_, _ = b.DeclineChatJoinRequest(chat.Id, joinUser.Id, nil)
-		helpText = "✅ Successfully Banned! %s"
+		helpText = "Successfully Banned! %s"
 	}
 
 	_, _, err = msg.EditText(b,
