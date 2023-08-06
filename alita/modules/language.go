@@ -11,9 +11,9 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
 
-	"github.com/divideprojects/Alita_Robot/alita/db"
-	"github.com/divideprojects/Alita_Robot/alita/utils/chat_status"
-	"github.com/divideprojects/Alita_Robot/alita/utils/helpers"
+	"github.com/lalrochhara/Alita_Robot/alita/db"
+	"github.com/lalrochhara/Alita_Robot/alita/utils/chat_status"
+	"github.com/lalrochhara/Alita_Robot/alita/utils/helpers"
 )
 
 var languagesModule = moduleStruct{moduleName: "Languages"}
